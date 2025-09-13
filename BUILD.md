@@ -49,6 +49,11 @@ Local: Backend (Django) quickstart
    python backend/manage.py migrate
    python backend/manage.py runserver
 
+Tests
+
+- By default, the project will use an in-memory SQLite database for running tests locally to avoid requiring Postgres SUPERUSER/CREATEDB privileges. This behavior was added to `backend/settings.py` and is triggered when you run `python manage.py test`.
+- To run tests against Postgres instead, set the appropriate DB env vars (DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT) and ensure the DB user has CREATEDB privileges.
+
 CI Overview
 
 - The repository includes CI workflows for GitHub Actions, GitLab CI, and CircleCI.

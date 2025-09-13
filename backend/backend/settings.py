@@ -4,6 +4,7 @@ Django settings for backend project.
 
 from pathlib import Path
 from decouple import config
+import sys
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -70,16 +71,26 @@ TEMPLATES = [
 WSGI_APPLICATION = 'backend.wsgi.application'
 
 # Database
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'mall_rent_db',
-        'USER': 'rms_user',
-        'PASSWORD': 'emerge@2025',
-        'HOST': 'localhost',
-        'PORT': '5432',
+# Read DB credentials from environment (use decouple .env or CI secrets)
+if 'test' in sys.argv:
+    # Use fast in-memory SQLite for tests to avoid needing DB admin privileges
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': ':memory:',
+        }
     }
-}
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': config('DB_NAME', default='mall_rent_db'),
+            'USER': config('DB_USER', default='rms_user'),
+            'PASSWORD': config('DB_PASSWORD', default='emerge@2025'),
+            'HOST': config('DB_HOST', default='localhost'),
+            'PORT': config('DB_PORT', default='5432'),
+        }
+    }
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [
