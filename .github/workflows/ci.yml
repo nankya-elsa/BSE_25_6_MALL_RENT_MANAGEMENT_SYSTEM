@@ -2,22 +2,47 @@ name: CI Pipeline - Automated Testing & Code Quality
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main ]        # Run when pushing to main
   pull_request:
-    branches: [ main ]
+    branches: [ main ]        # Run on PRs targeting main
 
 jobs:
+  backend:
+    name: Build Django Backend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"   # Match your backend version
+
+      - name: Install Dependencies
+        run: |
+          cd backend
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Migrations (just to ensure DB setup works)
+        run: |
+          cd backend
+          python manage.py migrate --noinput
+
   test-and-lint:
+    name: Frontend Lint & Test
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: "22"   # Required for Vite
 
       - name: Install dependencies
         run: npm install
