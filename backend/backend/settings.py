@@ -5,6 +5,7 @@ Django settings for backend project.
 from pathlib import Path
 from decouple import config
 import sys
+import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -72,8 +73,9 @@ WSGI_APPLICATION = 'backend.wsgi.application'
 
 # Database
 # Read DB credentials from environment (use decouple .env or CI secrets)
-if 'test' in sys.argv:
-    # Use fast in-memory SQLite for tests to avoid needing DB admin privileges
+if 'test' in sys.argv and not os.environ.get('CI'):
+    # Use fast in-memory SQLite for local test runs to avoid needing DB admin privileges.
+    # In CI (where CI=true), tests will run against the configured Postgres service.
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
