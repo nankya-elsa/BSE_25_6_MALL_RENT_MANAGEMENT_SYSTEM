@@ -18,12 +18,23 @@ jobs:
           POSTGRES_DB: ${{ secrets.DB_NAME }}
         ports:
           - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U ${{ secrets.DB_USER }}" 
+          --health-interval 10s 
+          --health-timeout 5s 
+          --health-retries 5
+
+    env:
+      CI: true
+
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
+
       - name: Cache pip
         uses: actions/cache@v4
         with:
@@ -31,37 +42,37 @@ jobs:
           key: ${{ runner.os }}-pip-${{ hashFiles('backend/requirements.txt') }}
           restore-keys: |
             ${{ runner.os }}-pip-
+
       - name: Install backend dependencies
+        working-directory: backend
         run: |
-          python -m venv venv
-          source venv/bin/activate
-          pip install --upgrade pip
-          pip install -r backend/requirements.txt
+          python -m pip install --upgrade pip
+          python -m pip install -r requirements.txt
+
       - name: Wait for Postgres
         env:
-          PGPASSWORD: ${{ secrets.DB_PASSWORD }}
-          PGUSER: ${{ secrets.DB_USER }}
-          PGDATABASE: ${{ secrets.DB_NAME }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
         run: |
           for i in $(seq 1 30); do
-            pg_isready -h 127.0.0.1 -U "$PGUSER" -d "$PGDATABASE" && break || sleep 1
+            pg_isready -h "$DB_HOST" -U "$DB_USER" -d "$DB_NAME" && break || sleep 1
           done
+
       - name: Run migrations
+        working-directory: backend
         env:
           DB_NAME: ${{ secrets.DB_NAME }}
           DB_USER: ${{ secrets.DB_USER }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           DB_HOST: 127.0.0.1
           DB_PORT: 5432
-        run: |
-          source venv/bin/activate
-          python backend/manage.py migrate --noinput
+        run: python manage.py migrate --noinput
+
       - name: Backend lint
-        run: |
-          source venv/bin/activate
-          pip install flake8
-          flake8 backend
-      - name: Run backend tests
+        working-directory: backend
         env:
           DB_NAME: ${{ secrets.DB_NAME }}
           DB_USER: ${{ secrets.DB_USER }}
@@ -69,16 +80,23 @@ jobs:
           DB_HOST: 127.0.0.1
           DB_PORT: 5432
         run: |
-          source venv/bin/activate
-          python backend/manage.py test
+          python -m pip install flake8
+          flake8 .
+
+      - name: Run backend tests
+        working-directory: backend
+        env:
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+        run: python manage.py test
 
   frontend-build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      # Reminder: configure repository secrets (DB_NAME, DB_USER, DB_PASSWORD)
-      # in Settings → Secrets and variables → Actions
 
       - name: Cache npm
         uses: actions/cache@v4
@@ -98,7 +116,7 @@ jobs:
           cd frontend
           npm ci
 
-      - name: Lint (optional)
+      - name: Lint frontend (optional)
         run: |
           cd frontend
           npm run lint
