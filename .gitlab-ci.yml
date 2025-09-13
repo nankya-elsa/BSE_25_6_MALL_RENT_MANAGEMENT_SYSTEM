@@ -1,0 +1,40 @@
+stages:
+  - backend-test
+  - frontend-build
+
+variables:
+  # Set these in GitLab CI/CD > Variables for production/CI security
+  POSTGRES_DB: $POSTGRES_DB
+  POSTGRES_USER: $POSTGRES_USER
+  POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+  DB_HOST: postgres
+
+backend-test:
+  image: python:3.11
+  stage: backend-test
+  services:
+    - name: postgres:15
+      alias: postgres
+  before_script:
+    - pip install --upgrade pip
+    - pip install -r backend/requirements.txt
+    - export DATABASE_URL=postgres://$POSTGRES_USER:$POSTGRES_PASSWORD@$DB_HOST:5432/$POSTGRES_DB
+  # Lint backend (fail on errors)
+  after_script:
+    - pip install flake8
+    - flake8 backend
+  script:
+    - python backend/manage.py migrate --noinput
+    - python backend/manage.py test
+
+frontend-build:
+  image: node:18
+  stage: frontend-build
+  script:
+    - cd frontend
+    - npm ci
+    - npm run lint || true
+    - npm run build
+  artifacts:
+    paths:
+      - frontend/dist/

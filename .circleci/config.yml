@@ -1,0 +1,57 @@
+version: 2.1
+jobs:
+  backend-test:
+    docker:
+      - image: cimg/python:3.11
+      - image: postgres:15
+        environment:
+          POSTGRES_USER: $POSTGRES_USER
+          POSTGRES_DB: $POSTGRES_DB
+          POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+    steps:
+      - checkout
+      - run:
+          name: Install backend deps
+          command: |
+            python -m venv venv
+            . venv/bin/activate
+            pip install --upgrade pip
+            pip install -r backend/requirements.txt
+      - run:
+          name: Backend lint
+          command: |
+            . venv/bin/activate
+            pip install flake8
+            flake8 backend
+      - run:
+          name: Wait for Postgres
+          command: |
+            for i in `seq 1 30`; do
+              pg_isready -h 127.0.0.1 && break || sleep 1
+            done
+      - run:
+          name: Run migrations & tests
+          command: |
+            . venv/bin/activate
+            python backend/manage.py migrate --noinput
+            python backend/manage.py test
+
+  frontend-build:
+    docker:
+      - image: cimg/node:18
+    steps:
+      - checkout
+      - run:
+          name: Install and build frontend
+          command: |
+            cd frontend
+            npm ci
+            npm run lint
+            npm run build
+
+workflows:
+  version: 2
+  build_and_test:
+    jobs:
+      - backend-test
+      - frontend-build
