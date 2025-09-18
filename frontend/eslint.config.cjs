@@ -8,6 +8,14 @@ module.exports = [
     ignores: ['dist', 'node_modules'],
   },
   {
+    files: ['babel.config.js'],
+    languageOptions: {
+      ecmaVersion: 2020,
+      sourceType: 'script',
+      globals: require('globals').node,
+    },
+  },
+  {
     files: ['**/*.{js,ts,tsx}'],
     languageOptions: {
       parser: tsEslintParser,

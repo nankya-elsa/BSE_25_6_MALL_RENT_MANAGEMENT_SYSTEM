@@ -9,5 +9,18 @@
   "rules": {
     "semi": ["error", "always"],
     "quotes": ["error", "double"]
-  }
+  },
+  "overrides": [
+    {
+      "files": ["*.test.js"],
+      "rules": {
+        "@typescript-eslint/no-require-imports": "off",
+        "no-undef": "off"
+      }
+    },
+    {
+      "files": ["**/babel.config.js"], // <--- updated to match any folder
+      "env": { "node": true }
+    }
+  ]
 }
