@@ -3,7 +3,6 @@ module.exports = {
   testMatch: ['**/tests/**/*.test.js', '**/tests/**/*.test.ts'],
   moduleFileExtensions: ['js', 'ts', 'tsx', 'json', 'node'],
   transform: {
-    '^.+\\.ts$': 'ts-jest'
+    '^.+\\.(ts|tsx|js|jsx)$': 'ts-jest',
   }
 };
-

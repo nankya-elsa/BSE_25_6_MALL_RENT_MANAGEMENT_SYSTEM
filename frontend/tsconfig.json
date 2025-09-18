@@ -3,5 +3,12 @@
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }
-  ]
+  ],
+  "compilerOptions": {
+    "allowJs": true,
+    "esModuleInterop": true,
+    "strict": true, // Enables all strict type-checking options
+    "skipLibCheck": true, // Speeds up compilation
+    "forceConsistentCasingInFileNames": true // Helps avoid case-related import errors
+  }
 }
