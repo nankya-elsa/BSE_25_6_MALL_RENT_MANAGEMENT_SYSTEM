@@ -27,6 +27,10 @@ jobs:
         working-directory: frontend
         run: npm ci
 
+      - name: Install ESLint dependencies
+        working-directory: frontend
+        run: npm install @typescript-eslint/parser eslint
+
       - name: Install Linting Dependencies
         working-directory: frontend
         run: npm install @typescript-eslint/parser eslint-plugin-import
