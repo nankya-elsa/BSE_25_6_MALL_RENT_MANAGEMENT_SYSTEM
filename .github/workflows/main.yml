@@ -80,22 +80,22 @@ jobs:
             sleep 5
           done    
 
-            - name: Run migrations
+      - name: Run migrations
         working-directory: backend
         env:
-          DB_USER: postgres
-          DB_PASSWORD: postgres
-          DB_NAME: mall_test_db  
-          DB_HOST: postgres
-          DB_PORT: 5432
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: mall_test_db  
+          POSTGRES_HOST: postgres
+          POSTGRES_PORT: 5432
         run: python manage.py migrate
 
       - name: Run tests
         working-directory: backend
         env:
-          DB_USER: postgres
-          DB_PASSWORD: postgres
-          DB_NAME: mall_test_db  
-          DB_HOST: postgres
-          DB_PORT: 5432
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: mall_test_db  
+          POSTGRES_HOST: postgres
+          POSTGRES_PORT: 5432
         run: python manage.py test
