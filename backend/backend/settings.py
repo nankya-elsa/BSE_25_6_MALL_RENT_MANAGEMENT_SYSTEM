@@ -71,14 +71,15 @@ TEMPLATES = [
 WSGI_APPLICATION = 'backend.wsgi.application'
 
 # Database
+# Database
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.environ.get('POSTGRES_DB', 'mall_db'),
-        'USER': os.environ.get('POSTGRES_USER', 'postgres'),
-        'PASSWORD': os.environ.get('POSTGRES_PASSWORD', 'postgres'),
-        'HOST': os.environ.get('POSTGRES_HOST', 'localhost'),
-        'PORT': os.environ.get('POSTGRES_PORT', '5432'),
+        'NAME': config('POSTGRES_DB', default='mall_db'),
+        'USER': config('POSTGRES_USER', default='postgres'),
+        'PASSWORD': config('POSTGRES_PASSWORD', default='postgres'),
+        'HOST': config('POSTGRES_HOST', default='localhost'),
+        'PORT': config('POSTGRES_PORT', default='5432', cast=int),
     }
 }
 
