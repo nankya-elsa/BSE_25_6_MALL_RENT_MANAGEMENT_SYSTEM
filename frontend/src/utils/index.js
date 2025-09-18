@@ -25,4 +25,4 @@ function average(arr) {
   return arr.reduce((a, b) => a + b, 0) / arr.length;
 }
 
-module.exports = { sum, multiply, divide, isEven, maxOfArray, average };
+export { sum, multiply, divide, isEven, maxOfArray, average };

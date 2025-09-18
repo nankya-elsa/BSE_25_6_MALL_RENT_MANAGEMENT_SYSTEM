@@ -1,6 +1,5 @@
 // tests/unit.test.js
-const { sum, multiply, divide, isEven, maxOfArray, average } = require("../src/utils/index");
-
+import { sum, multiply, divide, isEven, maxOfArray, average } from "../src/utils/index";
 test("adds 2 + 3 to equal 5", () => {
   expect(sum(2, 3)).toBe(5);
 });
