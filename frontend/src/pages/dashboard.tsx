@@ -31,8 +31,9 @@ const DashboardPage: React.FC = () => {
 
   const handleLogout = () => {
     // Clear localStorage and redirect
-    //localStorage.removeItem("user");
-    //navigate("/login");
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    navigate("/login");
   };
 
   if (loading) {
