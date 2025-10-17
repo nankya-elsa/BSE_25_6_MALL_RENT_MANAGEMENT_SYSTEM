@@ -3,7 +3,7 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      - ci-cd-pipeline # Your branch name
+      #- ci-cd-pipeline # Your branch name
       - main
   pull_request:
     branches:
