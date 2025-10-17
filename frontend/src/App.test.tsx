@@ -2,8 +2,8 @@ import React from "react";
 import { render } from "@testing-library/react";
 import { describe, test, expect, jest } from "@jest/globals";
 
-// Mock the config module before importing App
-jest.mock("../config", () => ({
+// Mock the config module with correct path
+jest.mock("./config", () => ({
   API_BASE_URL: "http://localhost:8000",
 }));
 
