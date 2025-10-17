@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { API_BASE_URL } from "../config";
 
 interface RegisterFormData {
   email: string;
@@ -54,7 +55,7 @@ const RegisterPage: React.FC = () => {
     try {
       // Direct API call to Django backend
       const response = await axios.post(
-        "http://localhost:8000/api/auth/register/",
+        `${API_BASE_URL}/api/auth/register/`,
         formData,
         {
           headers: {
