@@ -213,6 +213,10 @@ Shops
 GET /api/shops/user-shops/ - Get user's shops
 POST /api/shops/make-payment/ - Make rent payment
 
+## CI Testing
+
+This is a test commit to verify CI pipeline functionality.
+
 ## Tips for Dev Workflow
 
 ### 1. Always create a new branch when working on a feature
