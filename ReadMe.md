@@ -236,6 +236,6 @@ git push origin feature/your-name-feature-name
 
 ### 4. Avoid working on the main branch directly. Collaborate via pull requests.
 Team Members
-
+Ntulume Wilson
 [Add team member names here]
 ````
