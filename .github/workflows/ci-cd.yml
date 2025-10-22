@@ -135,3 +135,56 @@ jobs:
           else
             echo "Deploying to STAGING"
           fi
+
+  # Job 5: Verify Production Deployment (Automated Rollback Alternative)
+  verify-deployment:
+    name: Verify Deployment Health
+    needs: [backend-test, frontend-test, frontend-build]
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Wait for Render deployment
+        run: |
+          echo "Waiting 90 seconds for Render to deploy..."
+          sleep 90
+
+      - name: Check backend health
+        run: |
+          echo " Checking production backend health..."
+
+          for i in {1..10}; do
+            response=$(curl -s -o /dev/null -w "%{http_code}" https://mall-rent-management-system-backend.onrender.com/health/)
+            
+            if [ $response -eq 200 ]; then
+              echo "Backend health check passed!"
+              curl -s https://mall-rent-management-system-backend.onrender.com/health/ | python3 -m json.tool
+              break
+            else
+              echo "Attempt $i: Health check returned $response, retrying..."
+              
+              if [ $i -eq 10 ]; then
+                echo "DEPLOYMENT FAILED - Health checks failed after 10 attempts"
+                echo "MANUAL ROLLBACK REQUIRED:"
+                echo "   1. Go to https://dashboard.render.com"
+                echo "   2. Select mall-rent-management-system-backend"
+                echo "   3. Click 'Deploys' tab"
+                echo "   4. Click 'Rollback to this deploy' on last working version"
+                exit 1
+              fi
+              
+              sleep 15
+            fi
+          done
+
+      - name: Check frontend availability
+        run: |
+          echo "Checking production frontend..."
+
+          response=$(curl -s -o /dev/null -w "%{http_code}" https://mall-rent-frontend.onrender.com/)
+
+          if [ $response -eq 200 ]; then
+            echo "Frontend is accessible!"
+          else
+            echo "Frontend returned status: $response"
+          fi
