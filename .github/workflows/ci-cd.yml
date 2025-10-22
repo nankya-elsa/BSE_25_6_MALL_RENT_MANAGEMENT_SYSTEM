@@ -3,8 +3,9 @@ name: CI/CD Pipeline
 on:
   push:
     branches:
-      #- ci-cd-pipeline # Your branch name
-      - main
+      - main #Production branch
+      - staging #Staging branch
+      #- ci-cd-pipeline # Development branch
   pull_request:
     branches:
       - main
@@ -103,10 +104,19 @@ jobs:
         working-directory: ./frontend
         run: npm ci
 
+      - name: Determine API URL
+        id: api-url
+        run: |
+          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            echo "url=https://mall-rent-management-system-backend.onrender.com" >> $GITHUB_OUTPUT
+          else
+            echo "url=https://mall-rent-backend-staging.onrender.com" >> $GITHUB_OUTPUT
+          fi
+
       - name: Build
         working-directory: ./frontend
         env:
-          VITE_API_URL: https://mall-rent-management-system-backend.onrender.com
+          VITE_API_URL: ${{ steps.api-url.outputs.url }}
         run: npm run build
 
   # Job 4: Deploy Notification
@@ -114,11 +124,14 @@ jobs:
     name: Deployment Ready
     needs: [backend-test, frontend-test, frontend-build]
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/ci-cd-pipeline'
 
     steps:
       - name: Deployment notification
         run: |
-          echo "✅ All tests passed!"
-          echo "✅ Build successful!"
-          echo "🚀 Render will auto-deploy from branch: ${{ github.ref_name }}"
+          echo "All tests passed!"
+          echo "Build successful!"
+          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            echo "Deploying to PRODUCTION"
+          else
+            echo "Deploying to STAGING"
+          fi
