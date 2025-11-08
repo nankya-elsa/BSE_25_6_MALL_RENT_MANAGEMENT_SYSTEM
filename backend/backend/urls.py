@@ -24,6 +24,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/auth/', include('user_accounts.urls')),
     path('health/', health_views.health_check, name='health_check'),
+    path('api/admin/', include('admin_dashboard.urls')),
 ]
 
 # Serve media files in development
