@@ -4,31 +4,39 @@ import LoginPage from "../pages/login";
 import RegisterPage from "../pages/register";
 import DashboardPage from "../pages/dashboard";
 
+// Admin Pages
+import AdminDashboard from "../pages/admin/AdminDashboard";
+import TenantManagement from "../pages/admin/TenantManagement";
+import RegisterTenant from "../pages/admin/RegisterTenant";
+import ProfileRequests from "../pages/admin/ProfileRequests";
+import PaymentHistory from "../pages/admin/PaymentHistory";
+import Analytics from "../pages/admin/Analytics";
+
 // Protected Route component
-interface ProtectedRouteProps {
-  children: React.ReactNode;
-}
+// interface ProtectedRouteProps {
+//   children: React.ReactNode;
+// }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const token = localStorage.getItem("token");
+// const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+//   const token = localStorage.getItem("token");
 
-  if (!token) {
-    return <Navigate to="/login" replace />;
-  }
+//   if (!token) {
+//     return <Navigate to="/login" replace />;
+//   }
 
-  return <>{children}</>;
-};
+//   return <>{children}</>;
+// };
 
 // Public Route component (redirect to dashboard if already logged in)
-const PublicRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const token = localStorage.getItem("token");
+// const PublicRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+//   const token = localStorage.getItem("token");
 
-  if (token) {
-    return <Navigate to="/dashboard" replace />;
-  }
+//   if (token) {
+//     return <Navigate to="/dashboard" replace />;
+//   }
 
-  return <>{children}</>;
-};
+//   return <>{children}</>;
+// };
 
 const AppRoutes: React.FC = () => {
   return (
@@ -36,33 +44,25 @@ const AppRoutes: React.FC = () => {
       {/* Public Routes */}
       <Route path="/" element={<Navigate to="/login" replace />} />
 
-      <Route
-        path="/login"
-        element={
-          <PublicRoute>
-            <LoginPage />
-          </PublicRoute>
-        }
-      />
+      <Route path="/login" element={<LoginPage />} />
 
-      <Route
-        path="/register"
-        element={
-          <PublicRoute>
-            <RegisterPage />
-          </PublicRoute>
-        }
-      />
+      <Route path="/register" element={<RegisterPage />} />
 
       {/* Protected Routes */}
-      <Route
-        path="/dashboard"
-        element={
-          <ProtectedRoute>
-            <DashboardPage />
-          </ProtectedRoute>
-        }
-      />
+      <Route path="/dashboard" element={<DashboardPage />} />
+
+      {/* Admin Routes */}
+      <Route path="/admin/dashboard" element={<AdminDashboard />} />
+
+      <Route path="/admin/tenants" element={<TenantManagement />} />
+
+      <Route path="/admin/register-tenant" element={<RegisterTenant />} />
+
+      <Route path="/admin/profile-requests" element={<ProfileRequests />} />
+
+      <Route path="/admin/payment-history" element={<PaymentHistory />} />
+
+      <Route path="/admin/analytics" element={<Analytics />} />
 
       {/* Fallback Route */}
       <Route path="*" element={<Navigate to="/" replace />} />
