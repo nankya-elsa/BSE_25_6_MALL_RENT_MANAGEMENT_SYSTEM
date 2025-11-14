@@ -54,18 +54,45 @@ const LoginPage: React.FC = () => {
         }
       );
 
+      // Determine user type based on email prefix
+      const isAdmin = formData.email.toLowerCase().startsWith('admin');
+      
       // Store token and user data
       localStorage.setItem("token", response.data.token);
-      localStorage.setItem("user", JSON.stringify(response.data.user));
+      
+      // Add user_type to the user data if not already present
+      const userData = {
+        ...response.data.user,
+        user_type: isAdmin ? 'admin' : 'tenant'
+      };
+      
+      localStorage.setItem("user", JSON.stringify(userData));
 
       console.log("Login successful:", response.data);
 
-      // Redirect to dashboard
-      navigate("/dashboard");
+      // Redirect based on user type
+      if (isAdmin) {
+        navigate("/admin/dashboard");
+      } else {
+        navigate("/dashboard");
+      }
     } catch (error: unknown) {
       console.error("Login error:", error);
 
-      setErrors({ general: "Registration failed. Please try again." });
+      // Handle different error types
+      if (axios.isAxiosError(error) && error.response) {
+        // If the server returns specific error messages
+        if (error.response.status === 401) {
+          setErrors({ general: "Invalid email or password. Please try again." });
+        } else if (error.response.data) {
+          // Handle field-specific errors
+          setErrors(error.response.data);
+        } else {
+          setErrors({ general: "Login failed. Please try again." });
+        }
+      } else {
+        setErrors({ general: "Login failed. Please try again." });
+      }
     } finally {
       setLoading(false);
     }
