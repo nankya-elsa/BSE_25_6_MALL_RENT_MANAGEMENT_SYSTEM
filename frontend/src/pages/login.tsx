@@ -60,7 +60,7 @@ const LoginPage: React.FC = () => {
       // Store token and user data
       localStorage.setItem("token", response.data.token);
       
-      // Add user_type to the user data if not already present
+      // Add user_type to user data if not already present
       const userData = {
         ...response.data.user,
         user_type: isAdmin ? 'admin' : 'tenant'
@@ -81,7 +81,7 @@ const LoginPage: React.FC = () => {
 
       // Handle different error types
       if (axios.isAxiosError(error) && error.response) {
-        // If the server returns specific error messages
+        // If server returns specific error messages
         if (error.response.status === 401) {
           setErrors({ general: "Invalid email or password. Please try again." });
         } else if (error.response.data) {
