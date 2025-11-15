@@ -142,16 +142,20 @@ const MakePayment: React.FC = () => {
         reference: "",
       });
 
-      // Auto-hide success message after 5 seconds
+      // Auto-hide success message after 10 seconds
       setTimeout(() => {
         setSuccess(false);
-      }, 5000);
+      }, 10000);
     } catch (err: unknown) {
       console.error("Payment error:", err);
 
+      // Narrow the unknown error: handle axios errors, generic Error, or fallback
       if (axios.isAxiosError(err)) {
-        const apiError = err.response?.data as { error?: string } | undefined;
-        setError(apiError?.error ?? "Payment failed. Please try again.");
+        const apiError = (err.response?.data as { error?: string } | undefined)
+          ?.error;
+        setError(
+          apiError || err.message || "Payment failed. Please try again."
+        );
       } else if (err instanceof Error) {
         setError(err.message || "Payment failed. Please try again.");
       } else {
