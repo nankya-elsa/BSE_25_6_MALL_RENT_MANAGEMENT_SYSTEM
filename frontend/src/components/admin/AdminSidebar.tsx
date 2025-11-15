@@ -16,10 +16,10 @@ const AdminSidebar: React.FC = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <div className="w-64 bg-black h-screen fixed left-0 top-0 flex flex-col">
+    <div className="w-64 bg-[#016367] h-screen fixed left-0 top-0 flex flex-col">
       {/* Logo Section */}
       <div className="p-6 border-b border-gray-800">
-        <h1 className="text-2xl font-bold text-red-600">HAM MALL</h1>
+        <h1 className="text-2xl font-bold text-gray-900">HAM MALL</h1>
         <p className="text-gray-400 text-sm mt-1">Admin Dashboard</p>
       </div>
 
@@ -31,8 +31,8 @@ const AdminSidebar: React.FC = () => {
             to={item.path}
             className={`flex items-center px-6 py-3 text-sm transition-colors ${
               isActive(item.path)
-                ? "bg-red-600 text-white border-r-4 border-green-500"
-                : "text-gray-400 hover:bg-gray-900 hover:text-white"
+                ? "bg-gray-900 text-white border-r-4 border-green-500"
+                : "text-gray-400 hover:bg-[#578384] hover:text-white"
             }`}
           >
             <span className="mr-3 text-lg">{item.icon}</span>

@@ -47,7 +47,8 @@ const DashboardPage: React.FC = () => {
         paymentDueDate: "2025-11-30",
         lastPaymentDate: "2025-10-31",
         outstandingBalance: 0,
-        tenantName: `${parsedUser.first_name} ${parsedUser.last_name}`.toUpperCase(),
+        tenantName:
+          `${parsedUser.first_name} ${parsedUser.last_name}`.toUpperCase(),
         leaseStartDate: "2023-01-01",
         leaseEndDate: "2025-12-31",
       });
@@ -109,8 +110,6 @@ const DashboardPage: React.FC = () => {
             </button>
           </div>
         </div>
-
-      
       </div>
 
       {/* SHOP DETAILS SECTION - 3 FLOATING CARDS ONLY */}
@@ -123,36 +122,83 @@ const DashboardPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
             {/* Card 1 - Shop Info */}
             <div className="bg-white rounded-2xl shadow-xl p-10 hover:shadow-2xl transition-shadow duration-300 border border-gray-100">
-              <h3 className="text-2xl font-bold text-blue-700 mb-8">Shop Information</h3>
+              <h3 className="text-2xl font-bold text-blue-700 mb-8">
+                Shop Information
+              </h3>
               <div className="space-y-6 text-lg">
-                <div className="flex justify-between"><span className="text-gray-600">Shop No.</span> <strong>{shopDetails?.shopNumber}</strong></div>
-                <div className="flex justify-between"><span className="text-gray-600">Type</span> <strong>{shopDetails?.shopType}</strong></div>
-                <div className="flex justify-between"><span className="text-gray-600">Floor</span> <strong>{shopDetails?.floor}</strong></div>
-                <div className="flex justify-between"><span className="text-gray-600">Size</span> <strong>{shopDetails?.size}</strong></div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Shop No.</span>{" "}
+                  <strong>{shopDetails?.shopNumber}</strong>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Type</span>{" "}
+                  <strong>{shopDetails?.shopType}</strong>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Floor</span>{" "}
+                  <strong>{shopDetails?.floor}</strong>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Size</span>{" "}
+                  <strong>{shopDetails?.size}</strong>
+                </div>
               </div>
             </div>
 
             {/* Card 2 - Lease Info */}
             <div className="bg-white rounded-2xl shadow-xl p-10 hover:shadow-2xl transition-shadow duration-300 border border-gray-100">
-              <h3 className="text-2xl font-bold text-emerald-700 mb-8">Lease Information</h3>
+              <h3 className="text-2xl font-bold text-emerald-700 mb-8">
+                Lease Information
+              </h3>
               <div className="space-y-6 text-lg">
-                <div className="flex justify-between"><span className="text-gray-600">Tenant</span> <strong>{shopDetails?.tenantName}</strong></div>
-                <div className="flex justify-between"><span className="text-gray-600">Start Date</span> <strong>{shopDetails?.leaseStartDate}</strong></div>
-                <div className="flex justify-between"><span className="text-gray-600">End Date</span> <strong>{shopDetails?.leaseEndDate}</strong></div>
-                <div className="flex justify-between"><span className="text-gray-600">Monthly Rent</span> <strong className="text-emerald-700 font-bold">${shopDetails?.monthlyRent}</strong></div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Tenant</span>{" "}
+                  <strong>{shopDetails?.tenantName}</strong>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Start Date</span>{" "}
+                  <strong>{shopDetails?.leaseStartDate}</strong>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">End Date</span>{" "}
+                  <strong>{shopDetails?.leaseEndDate}</strong>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Monthly Rent</span>{" "}
+                  <strong className="text-emerald-700 font-bold">
+                    ${shopDetails?.monthlyRent}
+                  </strong>
+                </div>
               </div>
             </div>
 
             {/* Card 3 - Payment Status (Make Payment scrolls here) */}
-            <div id="payment-card" className="bg-white rounded-2xl shadow-xl p-10 hover:shadow-2xl transition-shadow duration-300 border border-gray-100">
-              <h3 className="text-2xl font-bold text-purple-700 mb-8">Payment Status</h3>
+            <div
+              id="payment-card"
+              className="bg-white rounded-2xl shadow-xl p-10 hover:shadow-2xl transition-shadow duration-300 border border-gray-100"
+            >
+              <h3 className="text-2xl font-bold text-purple-700 mb-8">
+                Payment Status
+              </h3>
               <div className="space-y-6 text-lg">
-                <div className="flex justify-between"><span className="text-gray-600">Due Date</span> <strong>{shopDetails?.paymentDueDate}</strong></div>
-                <div className="flex justify-between"><span className="text-gray-600">Last Paid</span> <strong>{shopDetails?.lastPaymentDate}</strong></div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Due Date</span>{" "}
+                  <strong>{shopDetails?.paymentDueDate}</strong>
+                </div>
+                <div className="flex justify-between">
+                  <span className="text-gray-600">Last Paid</span>{" "}
+                  <strong>{shopDetails?.lastPaymentDate}</strong>
+                </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Outstanding</span>
-                  <strong className={`font-bold text-2xl ${shopDetails?.outstandingBalance! > 0 ? "text-red-600" : "text-green-600"}`}>
-                    ${shopDetails?.outstandingBalance}
+                  <strong
+                    className={`font-bold text-2xl ${
+                      (shopDetails?.outstandingBalance ?? 0) > 0
+                        ? "text-red-600"
+                        : "text-green-600"
+                    }`}
+                  >
+                    ${shopDetails?.outstandingBalance ?? 0}
                   </strong>
                 </div>
                 <div className="mt-10 text-center">

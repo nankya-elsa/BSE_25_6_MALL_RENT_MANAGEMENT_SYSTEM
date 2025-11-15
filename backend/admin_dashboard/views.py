@@ -12,7 +12,7 @@ from datetime import datetime, timedelta
 @permission_classes([AllowAny])
 def dashboard_stats(request):
     """Get dashboard statistics"""
-    total_tenants = User.objects.filter(user_type='tenant').count()
+    total_tenants = User.objects.filter(user_type='tenant', is_staff=False).count()
     total_shops = Shop.objects.count()
     occupied_shops = Shop.objects.filter(is_occupied=True).count()
     
@@ -39,8 +39,9 @@ def dashboard_stats(request):
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def tenant_list(request):
-    """Get all tenants"""
-    tenants = User.objects.filter(user_type='tenant')
+    """Get all tenants (exclude admins/staff)"""
+    # Only get users who are tenants (not staff/admin)
+    tenants = User.objects.filter(user_type='tenant', is_staff=False)
     tenant_data = []
     
     for tenant in tenants:
@@ -51,7 +52,7 @@ def tenant_list(request):
             'email': tenant.email,
             'phone_number': tenant.phone_number,
             'shop_count': shops.count(),
-            'shops': [{'shop_number': s.shop_number, 'monthly_rent': s.monthly_rent} for s in shops],
+            'shops': [{'shop_number': s.shop_number, 'monthly_rent': float(s.monthly_rent)} for s in shops],
             'created_at': tenant.created_at
         })
     
@@ -60,27 +61,85 @@ def tenant_list(request):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def register_tenant(request):
-    """Admin registers a new tenant"""
-    from user_accounts.serializers import UserRegistrationSerializer
+    """
+    Admin registers a new tenant with shop assignments
+    Admin provides basic info, tenant will set password on first login
+    """
+    from user_accounts.serializers import AdminTenantRegistrationSerializer
     
-    data = request.data.copy()
-    serializer = UserRegistrationSerializer(data=data)
+    serializer = AdminTenantRegistrationSerializer(data=request.data)
     
     if serializer.is_valid():
-        user = serializer.save()
+        # Create tenant and assign shops
+        result = serializer.save()
+        user = result['user']
+        assigned_shops = result['assigned_shops']
+        temp_password = result['temp_password']
+        
+        # Prepare shop information for response
+        shops_info = [
+            {
+                'shop_number': shop.shop_number,
+                'monthly_rent': float(shop.monthly_rent),
+                'shop_type': shop.shop_type,
+                'floor_number': shop.floor_number
+            }
+            for shop in assigned_shops
+        ]
+        
         return Response({
             'message': 'Tenant registered successfully',
             'tenant': {
                 'id': user.id,
                 'email': user.email,
-                'full_name': user.full_name
-            }
+                'full_name': user.full_name,
+                'username': user.username,
+                'phone_number': user.phone_number
+            },
+            'assigned_shops': shops_info,
+            'temp_password': temp_password,  # Admin should communicate this to tenant
+            'note': 'Tenant should change password on first login'
         }, status=status.HTTP_201_CREATED)
     
     return Response({
         'message': 'Registration failed',
         'errors': serializer.errors
     }, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['DELETE'])
+@permission_classes([AllowAny])
+def delete_tenant(request, tenant_id):
+    """
+    Delete a tenant and mark their shops as vacant
+    """
+    try:
+        tenant = User.objects.get(id=tenant_id, user_type='tenant')
+        
+        # Get all shops assigned to this tenant
+        tenant_shops = Shop.objects.filter(tenant=tenant)
+        
+        # Mark shops as vacant before deleting tenant
+        for shop in tenant_shops:
+            shop.tenant = None
+            shop.is_occupied = False
+            shop.save()
+        
+        # Delete the tenant
+        tenant.delete()
+        
+        return Response({
+            'message': 'Tenant deleted successfully',
+            'shops_vacated': [shop.shop_number for shop in tenant_shops]
+        }, status=status.HTTP_200_OK)
+        
+    except User.DoesNotExist:
+        return Response({
+            'message': 'Tenant not found'
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({
+            'message': f'Error deleting tenant: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['GET'])
 @permission_classes([AllowAny])

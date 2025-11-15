@@ -42,7 +42,7 @@ const AdminDashboard: React.FC = () => {
 
   return (
     <AdminLayout>
-      <div>
+      <div className="p-8  min-h-screen">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">
           Dashboard Overview
         </h1>
@@ -50,7 +50,7 @@ const AdminDashboard: React.FC = () => {
         {/* Stats Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
           {/* Total Tenants */}
-          <div className="bg-white rounded-lg shadow-sm p-6 border-l-4 border-green-500">
+          <div className="bg-white rounded-lg shadow-sm p-6 border-l-4 border-green-600">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm font-medium">
@@ -60,7 +60,7 @@ const AdminDashboard: React.FC = () => {
                   {stats?.total_tenants}
                 </p>
               </div>
-              <div className="text-4xl">👥</div>
+              <div className="text-4xl"></div>
             </div>
           </div>
 
@@ -73,12 +73,12 @@ const AdminDashboard: React.FC = () => {
                   {stats?.total_shops}
                 </p>
               </div>
-              <div className="text-4xl">🏪</div>
+              <div className="text-4xl"></div>
             </div>
           </div>
 
           {/* Occupied Shops */}
-          <div className="bg-white rounded-lg shadow-sm p-6 border-l-4 border-green-500">
+          <div className="bg-white rounded-lg shadow-sm p-6 border-l-4 border-green-600">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm font-medium">
@@ -88,7 +88,7 @@ const AdminDashboard: React.FC = () => {
                   {stats?.occupied_shops}
                 </p>
               </div>
-              <div className="text-4xl">✅</div>
+              <div className="text-4xl"></div>
             </div>
           </div>
 
@@ -103,12 +103,12 @@ const AdminDashboard: React.FC = () => {
                   {stats?.vacant_shops}
                 </p>
               </div>
-              <div className="text-4xl">❌</div>
+              <div className="text-4xl"></div>
             </div>
           </div>
 
           {/* Monthly Revenue */}
-          <div className="bg-white rounded-lg shadow-sm p-6 border-l-4 border-green-500">
+          <div className="bg-white rounded-lg shadow-sm p-6 border-l-4 border-green-600">
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-gray-600 text-sm font-medium">
@@ -118,7 +118,7 @@ const AdminDashboard: React.FC = () => {
                   UGX {stats?.monthly_revenue.toLocaleString()}
                 </p>
               </div>
-              <div className="text-4xl">💰</div>
+              <div className="text-4xl"></div>
             </div>
           </div>
 
@@ -133,7 +133,7 @@ const AdminDashboard: React.FC = () => {
                   {stats?.pending_requests}
                 </p>
               </div>
-              <div className="text-4xl">📝</div>
+              <div className="text-4xl"></div>
             </div>
           </div>
         </div>
@@ -144,13 +144,13 @@ const AdminDashboard: React.FC = () => {
             Quick Actions
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <button className="bg-green-500 hover:bg-green-600 text-white font-semibold py-3 px-6 rounded-lg transition">
+            <button className="bg-[#016367] hover:bg-[#023536] text-white font-semibold py-3 px-6 rounded-lg transition">
               Register New Tenant
             </button>
-            <button className="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg transition">
+            <button className="bg-gray-900 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg transition">
               View Profile Requests
             </button>
-            <button className="bg-black hover:bg-gray-900 text-white font-semibold py-3 px-6 rounded-lg transition">
+            <button className="bg-green-600 hover:bg-green-900 text-white font-semibold py-3 px-6 rounded-lg transition">
               Generate Report
             </button>
           </div>
