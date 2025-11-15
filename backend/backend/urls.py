@@ -25,6 +25,7 @@ urlpatterns = [
     path('api/auth/', include('user_accounts.urls')),
     path('health/', health_views.health_check, name='health_check'),
     path('api/admin/', include('admin_dashboard.urls')),
+    path('api/shops/', include('shops.urls')),
 ]
 
 # Serve media files in development

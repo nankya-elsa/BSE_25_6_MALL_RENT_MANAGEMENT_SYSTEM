@@ -9,4 +9,5 @@ urlpatterns = [
     path('profile-requests/<int:request_id>/approve/', views.approve_profile_request, name='approve_request'),
     path('profile-requests/<int:request_id>/reject/', views.reject_profile_request, name='reject_request'),
     path('payment-history/', views.payment_history, name='payment_history'),
+    path('tenants/<int:tenant_id>/delete/', views.delete_tenant, name='delete_tenant'),
 ]
