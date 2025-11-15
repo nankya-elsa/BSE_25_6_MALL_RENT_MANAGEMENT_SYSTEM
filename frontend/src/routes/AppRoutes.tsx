@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import LoginPage from "../pages/login";
 import RegisterPage from "../pages/register";
 import DashboardPage from "../pages/dashboard";
+import MakePayment from "../pages/tenant/MakePayment";
 
 // Admin Pages
 import AdminDashboard from "../pages/admin/AdminDashboard";
@@ -50,6 +51,8 @@ const AppRoutes: React.FC = () => {
 
       {/* Protected Routes */}
       <Route path="/dashboard" element={<DashboardPage />} />
+
+      <Route path="/make-payment" element={<MakePayment />} />
 
       {/* Admin Routes */}
       <Route path="/admin/dashboard" element={<AdminDashboard />} />

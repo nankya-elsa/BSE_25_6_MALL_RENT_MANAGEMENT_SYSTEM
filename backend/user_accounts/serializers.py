@@ -4,6 +4,7 @@ from .models import User
 from django.db import transaction
 from django.utils import timezone
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -160,6 +161,8 @@ class AdminTenantRegistrationSerializer(serializers.Serializer):
                 shop = Shop.objects.get(shop_number=shop_num)
                 shop.tenant = user
                 shop.is_occupied = True
+                shop.balance = shop.monthly_rent  # Initial balance = monthly rent
+                shop.next_due_date = user.date_joined.date() + relativedelta(months=1)  # Due 1 month from join
                 shop.save()
                 assigned_shops.append(shop)
         
