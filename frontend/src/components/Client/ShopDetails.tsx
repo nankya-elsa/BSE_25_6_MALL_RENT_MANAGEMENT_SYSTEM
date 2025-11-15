@@ -1,127 +1,164 @@
 // components/ShopDetails.tsx
-import React from 'react';
+import React from "react";
+import { useNavigate } from "react-router-dom";
 
-interface ShopDetailsProps {
+interface ShopDetails {
   shopNumber: string;
   shopType: string;
+  floor: string;
+  size: string;
   monthlyRent: number;
   paymentDueDate: string;
   lastPaymentDate: string;
-  paymentStatus: 'Paid' | 'Pending' | 'Overdue';
+  nextPaymentDate: string;
+  outstandingBalance: number;
+  status: string;
   tenantName: string;
-  contactNumber: string;
   leaseStartDate: string;
   leaseEndDate: string;
-  onClose: () => void;
 }
 
-const ShopDetails: React.FC<ShopDetailsProps> = ({
-  shopNumber,
-  shopType,
-  monthlyRent,
-  paymentDueDate,
-  lastPaymentDate,
-  paymentStatus,
-  tenantName,
-  contactNumber,
-  leaseStartDate,
-  leaseEndDate,
-  onClose
-}) => {
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'Paid':
-        return 'bg-green-100 text-green-800';
-      case 'Pending':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'Overdue':
-        return 'bg-red-100 text-red-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
+interface ShopDetailsProps {
+  shopDetails: ShopDetails;
+}
+
+const ShopDetails: React.FC<ShopDetailsProps> = ({ shopDetails }) => {
+  const navigate = useNavigate();
+
+  const handleMakePayment = () => {
+    navigate("/payment");
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-2xl max-h-screen overflow-y-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">Shop Details</h2>
-          <button
-            onClick={onClose}
-            className="text-gray-500 hover:text-gray-700 focus:outline-none"
+    <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-6">
+        <h2 className="text-3xl font-bold flex items-center">
+          <svg className="w-8 h-8 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+          </svg>
+          Shop Details
+        </h2>
+      </div>
+      
+      <div className="p-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          {/* Shop Information Card */}
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-100">
+            <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
+              <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center mr-3">
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+              </div>
+              Shop Information
+            </h3>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center py-2 border-b border-blue-100">
+                <span className="text-gray-600">Shop Number</span>
+                <span className="font-bold text-gray-800">{shopDetails.shopNumber}</span>
+              </div>
+              <div className="flex justify-between items-center py-2 border-b border-blue-100">
+                <span className="text-gray-600">Shop Type</span>
+                <span className="font-bold text-gray-800">{shopDetails.shopType}</span>
+              </div>
+              <div className="flex justify-between items-center py-2 border-b border-blue-100">
+                <span className="text-gray-600">Floor</span>
+                <span className="font-bold text-gray-800">{shopDetails.floor}</span>
+              </div>
+              <div className="flex justify-between items-center py-2">
+                <span className="text-gray-600">Size</span>
+                <span className="font-bold text-gray-800">{shopDetails.size}</span>
+              </div>
+            </div>
+          </div>
+          
+          {/* Lease Information Card */}
+          <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-xl border border-green-100">
+            <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
+              <div className="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center mr-3">
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              Lease Information
+            </h3>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center py-2 border-b border-green-100">
+                <span className="text-gray-600">Tenant Name</span>
+                <span className="font-bold text-gray-800">{shopDetails.tenantName}</span>
+              </div>
+              <div className="flex justify-between items-center py-2 border-b border-green-100">
+                <span className="text-gray-600">Lease Start</span>
+                <span className="font-bold text-gray-800">{shopDetails.leaseStartDate}</span>
+              </div>
+              <div className="flex justify-between items-center py-2 border-b border-green-100">
+                <span className="text-gray-600">Lease End</span>
+                <span className="font-bold text-gray-800">{shopDetails.leaseEndDate}</span>
+              </div>
+              <div className="flex justify-between items-center py-2">
+                <span className="text-gray-600">Monthly Rent</span>
+                <span className="font-bold text-green-600">${shopDetails.monthlyRent}</span>
+              </div>
+            </div>
+          </div>
+          
+          {/* Payment Information Card */}
+          <div className="bg-gradient-to-br from-purple-50 to-pink-50 p-6 rounded-xl border border-purple-100">
+            <h3 className="text-xl font-bold text-gray-800 mb-6 flex items-center">
+              <div className="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center mr-3">
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
+                </svg>
+              </div>
+              Payment Information
+            </h3>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center py-2 border-b border-purple-100">
+                <span className="text-gray-600">Payment Due</span>
+                <span className="font-bold text-gray-800">{shopDetails.paymentDueDate}</span>
+              </div>
+              <div className="flex justify-between items-center py-2 border-b border-purple-100">
+                <span className="text-gray-600">Last Payment</span>
+                <span className="font-bold text-gray-800">{shopDetails.lastPaymentDate}</span>
+              </div>
+              <div className="flex justify-between items-center py-2 border-b border-purple-100">
+                <span className="text-gray-600">Next Payment</span>
+                <span className="font-bold text-gray-800">{shopDetails.nextPaymentDate}</span>
+              </div>
+              <div className="flex justify-between items-center py-2">
+                <span className="text-gray-600">Outstanding</span>
+                <span className={`font-bold text-lg ${
+                  shopDetails.outstandingBalance > 0 ? 'text-red-600' : 'text-green-600'
+                }`}>
+                  ${shopDetails.outstandingBalance}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        {/* Action Buttons */}
+        <div className="mt-8 flex flex-wrap gap-4 justify-center">
+          <button 
+            onClick={handleMakePayment}
+            className="bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white font-bold py-3 px-8 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center"
           >
-            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1" />
             </svg>
-          </button>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-sm font-medium text-gray-500">Shop Number</h3>
-              <p className="text-lg font-semibold text-gray-900">{shopNumber}</p>
-            </div>
-            <div>
-              <h3 className="text-sm font-medium text-gray-500">Shop Type</h3>
-              <p className="text-lg text-gray-900">{shopType}</p>
-            </div>
-            <div>
-              <h3 className="text-sm font-medium text-gray-500">Monthly Rent</h3>
-              <p className="text-lg text-gray-900">${monthlyRent.toFixed(2)}</p>
-            </div>
-            <div>
-              <h3 className="text-sm font-medium text-gray-500">Payment Status</h3>
-              <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(paymentStatus)}`}>
-                {paymentStatus}
-              </span>
-            </div>
-          </div>
-
-          <div className="space-y-4">
-            <div>
-              <h3 className="text-sm font-medium text-gray-500">Tenant Name</h3>
-              <p className="text-lg text-gray-900">{tenantName}</p>
-            </div>
-            <div>
-              <h3 className="text-sm font-medium text-gray-500">Contact Number</h3>
-              <p className="text-lg text-gray-900">{contactNumber}</p>
-            </div>
-            <div>
-              <h3 className="text-sm font-medium text-gray-500">Payment Due Date</h3>
-              <p className="text-lg text-gray-900">{paymentDueDate}</p>
-            </div>
-            <div>
-              <h3 className="text-sm font-medium text-gray-500">Last Payment Date</h3>
-              <p className="text-lg text-gray-900">{lastPaymentDate}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-6 pt-6 border-t border-gray-200">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <h3 className="text-sm font-medium text-gray-500">Lease Start Date</h3>
-              <p className="text-lg text-gray-900">{leaseStartDate}</p>
-            </div>
-            <div>
-              <h3 className="text-sm font-medium text-gray-500">Lease End Date</h3>
-              <p className="text-lg text-gray-900">{leaseEndDate}</p>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-8 flex justify-end">
-          <button
-            onClick={onClose}
-            className="bg-gray-200 hover:bg-gray-300 text-gray-800 font-medium py-2 px-4 rounded-md mr-2"
-          >
-            Close
-          </button>
-          <button
-            className="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md"
-          >
             Make Payment
+          </button>
+          <button className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white font-bold py-3 px-8 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center">
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            View Payment History
+          </button>
+          <button className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white font-bold py-3 px-8 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center">
+            <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            Download Lease
           </button>
         </div>
       </div>
