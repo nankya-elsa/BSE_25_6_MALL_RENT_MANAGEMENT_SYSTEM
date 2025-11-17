@@ -51,48 +51,48 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                   Ham Shopping Mall
                 </h1>
               </div>
-              
+            </div>
+
+            <div className="flex items-center space-x-4">
               <div className="hidden md:flex space-x-6">
-                <Link 
+                <Link
                   to="/dashboard"
                   className={`font-medium transition-colors duration-200 pb-1 border-b-2 ${
-                    isActive('/dashboard') 
-                      ? 'text-blue-600 border-blue-600' 
-                      : 'text-gray-700 border-transparent hover:text-blue-600 hover:border-blue-600'
+                    isActive("/dashboard")
+                      ? "text-blue-600 border-blue-600"
+                      : "text-gray-700 border-transparent hover:text-blue-600 hover:border-blue-600"
                   }`}
                 >
                   Dashboard
                 </Link>
-                <Link 
-                  to="/dashboard"
-                  onClick={() => window.scrollTo({ top: 400, behavior: 'smooth' })}
+                <Link
+                  to="/my-shops"
                   className={`font-medium transition-colors duration-200 pb-1 border-b-2 ${
-                    location.pathname === '/dashboard' && window.scrollY > 300
-                      ? 'text-blue-600 border-blue-600' 
-                      : 'text-gray-700 border-transparent hover:text-blue-600 hover:border-blue-600'
+                    isActive("/my-shops")
+                      ? "text-blue-600 border-blue-600"
+                      : "text-gray-700 border-transparent hover:text-blue-600 hover:border-blue-600"
                   }`}
                 >
                   Shop Details
                 </Link>
-                <Link 
-                  to="/payment"
+                <Link
+                  to="/make-payment"
                   className={`font-medium transition-colors duration-200 pb-1 border-b-2 ${
-                    isActive('/payment') 
-                      ? 'text-blue-600 border-blue-600' 
-                      : 'text-gray-700 border-transparent hover:text-blue-600 hover:border-blue-600'
+                    isActive("/make-payment")
+                      ? "text-blue-600 border-blue-600"
+                      : "text-gray-700 border-transparent hover:text-blue-600 hover:border-blue-600"
                   }`}
                 >
                   Make Payment
                 </Link>
               </div>
-            </div>
-            
-            <div className="flex items-center space-x-4">
               <div className="hidden md:block">
-                <p className="text-sm text-gray-500">Welcome back,</p>
-                <p className="font-semibold text-gray-800">{user?.first_name}</p>
+                <p className="text-sm text-gray-500">
+                  Welcome back,{" "}
+                  <span className="text-blue-600">{user?.first_name}</span>
+                </p>
               </div>
-              
+
               <div className="relative">
                 <button
                   onClick={() => setShowProfileDropdown(!showProfileDropdown)}
@@ -102,11 +102,13 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                     {user?.first_name?.charAt(0).toUpperCase()}
                   </span>
                 </button>
-                
+
                 {showProfileDropdown && (
                   <div className="absolute right-0 mt-3 w-56 bg-white rounded-xl shadow-2xl py-2 z-50 border border-gray-100">
                     <div className="px-4 py-3 border-b border-gray-100">
-                      <p className="text-sm font-semibold text-gray-800">{user?.first_name} {user?.last_name}</p>
+                      <p className="text-sm font-semibold text-gray-800">
+                        {user?.first_name} {user?.last_name}
+                      </p>
                       <p className="text-xs text-gray-500">{user?.email}</p>
                     </div>
                     <Link
@@ -114,8 +116,18 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                       className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 w-full transition-colors"
                       onClick={() => setShowProfileDropdown(false)}
                     >
-                      <svg className="w-5 h-5 mr-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                      <svg
+                        className="w-5 h-5 mr-3 text-gray-400"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                        />
                       </svg>
                       Profile
                     </Link>
@@ -123,8 +135,18 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
                       onClick={handleLogout}
                       className="flex items-center px-4 py-3 text-sm text-red-600 hover:bg-red-50 w-full transition-colors"
                     >
-                      <svg className="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                      <svg
+                        className="w-5 h-5 mr-3"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                        />
                       </svg>
                       Logout
                     </button>
@@ -135,11 +157,9 @@ const Layout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
           </div>
         </div>
       </nav>
-      
+
       {/* Page Content */}
-      <div className="flex-1">
-        {children}
-      </div>
+      <div className="flex-1">{children}</div>
     </div>
   );
 };

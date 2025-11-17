@@ -6,6 +6,7 @@ from rest_framework.authtoken.models import Token
 from django.contrib.auth import authenticate
 from .serializers import UserRegistrationSerializer, UserLoginSerializer, UserSerializer
 from .models import User
+from django.contrib.auth import get_user_model
 import logging
 
 # Create logger for this module
@@ -42,18 +43,56 @@ def register(request):
         'errors': serializer.errors
     }, status=status.HTTP_400_BAD_REQUEST)
 
+
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def login(request):
-    """Login user"""
+    """Login user and return user data including role"""
     email = request.data.get('email', 'unknown')
+    password = request.data.get('password')
+    
     logger.info(f"Login attempt for email: {email}")
     
+    # Validate input
+    if not email or not password:
+        return Response({
+            'message': 'Email and password are required',
+            'errors': {
+                'email': 'This field is required' if not email else None,
+                'password': 'This field is required' if not password else None,
+            }
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
     try:
+        # Get user by email
         user = User.objects.get(email=email)
-        if user.check_password(request.data.get('password')):
-            user_data = UserSerializer(user).data
-            logger.info(f"Successful login for user: {email}")
+        
+        # Check if user is active
+        if not user.is_active:
+            logger.warning(f"Login attempt for inactive user: {email}")
+            return Response({
+                'message': 'Your account is not active. Please contact the administrator.'
+            }, status=status.HTTP_403_FORBIDDEN)
+        
+        # Verify password
+        if user.check_password(password):
+            
+            # Prepare user data with role information
+            user_data = {
+                'id': user.id,
+                'email': user.email,
+                'username': user.username,
+                'first_name': user.first_name,
+                'last_name': user.last_name,
+                'full_name': user.get_full_name() if hasattr(user, 'get_full_name') else f"{user.first_name} {user.last_name}",
+                'phone_number': getattr(user, 'phone_number', ''),
+                'is_staff': user.is_staff,  # CRITICAL: This determines admin vs tenant
+                'is_active': user.is_active,
+                'user_type': 'admin' if user.is_staff else 'tenant',  # Explicit role
+            }
+            
+            logger.info(f"Successful login for user: {email} (is_staff: {user.is_staff})")
+            
             return Response({
                 'message': 'Login successful',
                 'user': user_data,
@@ -61,18 +100,21 @@ def login(request):
         else:
             logger.warning(f"Failed login attempt - invalid password for: {email}")
             return Response({
-                'message': 'Invalid credentials'
-            }, status=status.HTTP_400_BAD_REQUEST)
+                'message': 'Invalid email or password'
+            }, status=status.HTTP_401_UNAUTHORIZED)
+            
     except User.DoesNotExist:
         logger.warning(f"Failed login attempt - user not found: {email}")
         return Response({
-            'message': 'Invalid credentials'
-        }, status=status.HTTP_400_BAD_REQUEST)
+            'message': 'Invalid email or password'
+        }, status=status.HTTP_401_UNAUTHORIZED)
+        
     except Exception as e:
-        logger.error(f"Login error for {email}: {str(e)}")
+        logger.error(f"Login error for {email}: {str(e)}", exc_info=True)
         return Response({
-            'message': 'Internal server error'
+            'message': 'An error occurred during login. Please try again later.'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
 
 @api_view(['POST'])
 def logout(request):

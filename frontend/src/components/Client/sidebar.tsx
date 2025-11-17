@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 
 // Component name changed from AdminSidebar to sidebar
 const sidebar: React.FC = () => {
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const location = useLocation();
 
   const navItems = [

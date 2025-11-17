@@ -6,11 +6,11 @@ import Layout from "../components/Layout";
 import LoginPage from "../pages/login";
 import RegisterPage from "../pages/register";
 
-// Protected Pages
 import DashboardPage from "../pages/dashboard";
 import MakePayment from "../pages/tenant/MakePayment";
 import ProfilePage from "../pages/Client/ProfilePage";
 import PaymentPage from "../pages/PaymentPage";
+import ShopDetails from "../pages/tenant/ShopDetails";
 
 // Admin Pages
 import AdminDashboard from "../pages/admin/AdminDashboard";
@@ -58,59 +58,33 @@ const AppRoutes: React.FC = () => {
         }
       />
 
-      <Route path="/make-payment" element={<MakePayment />} />
+      <Route
+        path="/make-payment"
+        element={
+          <Layout>
+            <MakePayment />
+          </Layout>
+        }
+      />
 
       {/* Admin Routes */}
-      <Route
-        path="/admin/dashboard"
-        element={
-          <Layout>
-            <AdminDashboard />
-          </Layout>
-        }
-      />
+      <Route path="/admin/dashboard" element={<AdminDashboard />} />
+
+      <Route path="/admin/tenants" element={<TenantManagement />} />
+
+      <Route path="/admin/register-tenant" element={<RegisterTenant />} />
+
+      <Route path="/admin/profile-requests" element={<ProfileRequests />} />
+
+      <Route path="/admin/payment-history" element={<PaymentHistory />} />
+
+      <Route path="/admin/analytics" element={<Analytics />} />
 
       <Route
-        path="/admin/tenants"
+        path="/my-shops"
         element={
           <Layout>
-            <TenantManagement />
-          </Layout>
-        }
-      />
-
-      <Route
-        path="/admin/register-tenant"
-        element={
-          <Layout>
-            <RegisterTenant />
-          </Layout>
-        }
-      />
-
-      <Route
-        path="/admin/profile-requests"
-        element={
-          <Layout>
-            <ProfileRequests />
-          </Layout>
-        }
-      />
-
-      <Route
-        path="/admin/payment-history"
-        element={
-          <Layout>
-            <PaymentHistory />
-          </Layout>
-        }
-      />
-
-      <Route
-        path="/admin/analytics"
-        element={
-          <Layout>
-            <Analytics />
+            <ShopDetails />
           </Layout>
         }
       />

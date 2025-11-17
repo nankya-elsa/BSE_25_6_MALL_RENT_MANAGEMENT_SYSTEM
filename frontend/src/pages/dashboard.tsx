@@ -30,12 +30,6 @@ const DashboardPage: React.FC = () => {
     }
   }, [navigate]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    navigate("/login");
-  };
-
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center bg-gray-50">
@@ -54,31 +48,6 @@ const DashboardPage: React.FC = () => {
   return (
     <>
       <div className="min-h-screen bg-gray-50">
-        {/* Navigation */}
-        <nav className="bg-white shadow-sm">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <div className="flex items-center">
-                <h1 className="text-xl font-bold text-gray-900">
-                  Ham Shopping Mall
-                </h1>
-              </div>
-              <div className="flex items-center space-x-4">
-                <span className="text-gray-600">
-                  Welcome, {user.first_name}!
-                </span>
-                <div className="relative">
-                  <button
-                    onClick={handleLogout}
-                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium"
-                  >
-                    Logout
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </nav>
         {/* HERO SECTION */}
         <div
           className="relative h-screen w-full bg-cover bg-center flex items-center justify-center text-center text-white px-6"
@@ -88,11 +57,9 @@ const DashboardPage: React.FC = () => {
 
           <div className="relative z-10 max-w-5xl">
             <h1 className="text-6xl md:text-8xl font-black mb-4 drop-shadow-2xl">
-              HAM SHOPPING MALL
-            </h1>
-            <h2 className="text-3xl md:text-5xl font-light mb-6 tracking-wider">
               RENT MANAGEMENT SYSTEM
-            </h2>
+            </h1>
+            <h2 className="text-3xl md:text-5xl font-light mb-6 tracking-wider"></h2>
             <p className="text-xl mb-16 max-w-2xl mx-auto opacity-90">
               Your one-stop solution for seamless rent management
             </p>
