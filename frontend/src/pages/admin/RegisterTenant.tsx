@@ -165,7 +165,7 @@ const RegisterTenant: React.FC = () => {
 
   return (
     <AdminLayout>
-      <div className="max-w-3xl">
+      <div className="max-w-3xl ml-32">
         <h1 className="text-3xl font-bold text-gray-900 mb-8">
           Register New Tenant
         </h1>

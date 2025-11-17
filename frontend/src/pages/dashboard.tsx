@@ -18,19 +18,16 @@ const DashboardPage: React.FC = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Get user data from localStorage or fetch from API
     const userData = localStorage.getItem("user");
     if (userData) {
       setUser(JSON.parse(userData));
       setLoading(false);
     } else {
-      // If no user data in localStorage, redirect to login
       navigate("/login");
     }
   }, [navigate]);
 
   const handleLogout = () => {
-    // Clear localStorage and redirect
     localStorage.removeItem("user");
     localStorage.removeItem("token");
     navigate("/login");
@@ -91,10 +88,16 @@ const DashboardPage: React.FC = () => {
 
             {/* Action Buttons */}
             <div className="flex justify-center space-x-6 mb-8">
-              <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg text-lg transition duration-200">
+              <button
+                onClick={() => navigate("/my-shops")}
+                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-8 rounded-lg text-lg transition duration-200"
+              >
                 View Shop Details
               </button>
-              <button className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-8 rounded-lg text-lg transition duration-200">
+              <button
+                onClick={() => navigate("/make-payment")}
+                className="bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-8 rounded-lg text-lg transition duration-200"
+              >
                 Make Payment
               </button>
             </div>
@@ -104,7 +107,10 @@ const DashboardPage: React.FC = () => {
         {/* Navigation Links */}
         <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
           <div className="flex justify-center space-x-8">
-            <button className="flex flex-col items-center p-4 rounded-lg hover:bg-gray-50 transition duration-200">
+            <button
+              onClick={() => navigate("/my-shops")}
+              className="flex flex-col items-center p-4 rounded-lg hover:bg-gray-50 transition duration-200"
+            >
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-2">
                 <svg
                   className="w-6 h-6 text-blue-600"
@@ -125,7 +131,10 @@ const DashboardPage: React.FC = () => {
               </span>
             </button>
 
-            <button className="flex flex-col items-center p-4 rounded-lg hover:bg-gray-50 transition duration-200">
+            <button
+              onClick={() => navigate("/make-payment")}
+              className="flex flex-col items-center p-4 rounded-lg hover:bg-gray-50 transition duration-200"
+            >
               <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center mb-2">
                 <svg
                   className="w-6 h-6 text-green-600"
@@ -146,10 +155,37 @@ const DashboardPage: React.FC = () => {
               </span>
             </button>
 
-            <button className="flex flex-col items-center p-4 rounded-lg hover:bg-gray-50 transition duration-200">
+            <button
+              onClick={() => navigate("/payment-history")}
+              className="flex flex-col items-center p-4 rounded-lg hover:bg-gray-50 transition duration-200"
+            >
               <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center mb-2">
                 <svg
                   className="w-6 h-6 text-purple-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                  />
+                </svg>
+              </div>
+              <span className="text-sm font-medium text-gray-900">
+                Payment History
+              </span>
+            </button>
+
+            <button
+              onClick={() => navigate("/profile")}
+              className="flex flex-col items-center p-4 rounded-lg hover:bg-gray-50 transition duration-200"
+            >
+              <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-2">
+                <svg
+                  className="w-6 h-6 text-red-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"

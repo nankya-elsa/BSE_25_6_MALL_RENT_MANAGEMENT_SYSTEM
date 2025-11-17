@@ -4,6 +4,7 @@ from .models import User
 from django.db import transaction
 from django.utils import timezone
 from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
@@ -116,8 +117,7 @@ class AdminTenantRegistrationSerializer(serializers.Serializer):
     
     def create(self, validated_data):
         """
-        Create tenant user and assign shops
-        Password will be set by tenant on first login
+        Create tenant user and assign shops with proper initial balance and due date
         """
         from shops.models import Shop
         import secrets
@@ -153,13 +153,22 @@ class AdminTenantRegistrationSerializer(serializers.Serializer):
 
             # Force a refresh to ensure the user ID is available
             user.refresh_from_db()
+            
+            # Calculate initial due date (1 month from join date)
+            initial_due_date = user.date_joined.date() + relativedelta(months=1)
         
-            # Assign shops to this tenant
+            # Assign shops to this tenant with proper initialization
             assigned_shops = []
             for shop_num in shop_numbers:
                 shop = Shop.objects.get(shop_number=shop_num)
                 shop.tenant = user
                 shop.is_occupied = True
+                
+                # Initialize payment tracking
+                shop.total_paid = 0
+                shop.balance = shop.monthly_rent  # Initial balance is the monthly rent
+                shop.next_due_date = initial_due_date  # Due 1 month from join date
+                
                 shop.save()
                 assigned_shops.append(shop)
         

@@ -216,3 +216,97 @@ def payment_history(request):
         })
     
     return Response({'payments': data})
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def enhanced_analytics(request):
+    """
+    Get detailed analytics including:
+    - Total expected monthly revenue
+    - Total collected this month
+    - Total outstanding balance
+    - Per-tenant breakdown
+    """
+    current_month = datetime.now().month
+    current_year = datetime.now().year
+    
+    # Get all occupied shops
+    occupied_shops = Shop.objects.filter(is_occupied=True).select_related('tenant')
+    
+    # Calculate totals
+    total_expected_monthly = occupied_shops.aggregate(
+        total=Sum('monthly_rent')
+    )['total'] or 0
+    
+    total_outstanding_balance = occupied_shops.aggregate(
+        total=Sum('balance')
+    )['total'] or 0
+    
+    # Get payments made this month
+    monthly_collected = Payment.objects.filter(
+        payment_date__month=current_month,
+        payment_date__year=current_year,
+        status='completed'
+    ).aggregate(total=Sum('amount'))['total'] or 0
+    
+    # Get tenant-wise breakdown
+    tenant_breakdown = []
+    tenants = User.objects.filter(user_type='tenant', is_staff=False).prefetch_related('shops')
+    
+    for tenant in tenants:
+        tenant_shops = tenant.shops.filter(is_occupied=True)
+        
+        # Calculate tenant's total monthly rent
+        tenant_monthly_rent = sum(shop.monthly_rent for shop in tenant_shops)
+        
+        # Calculate tenant's total balance
+        tenant_balance = sum(shop.balance for shop in tenant_shops)
+        
+        # Get tenant's payments this month
+        tenant_monthly_paid = Payment.objects.filter(
+            tenant=tenant,
+            payment_date__month=current_month,
+            payment_date__year=current_year,
+            status='completed'
+        ).aggregate(total=Sum('amount'))['total'] or 0
+        
+        # Get shop details for this tenant
+        shops_detail = [
+            {
+                'shop_number': shop.shop_number,
+                'monthly_rent': float(shop.monthly_rent),
+                'balance': float(shop.balance),
+                'total_paid': float(shop.total_paid),
+                'next_due_date': shop.next_due_date.isoformat() if shop.next_due_date else None,
+                'payment_status': shop.get_payment_status()
+            }
+            for shop in tenant_shops
+        ]
+        
+        tenant_breakdown.append({
+            'tenant_id': tenant.id,
+            'tenant_name': tenant.full_name,
+            'email': tenant.email,
+            'phone_number': tenant.phone_number,
+            'total_monthly_rent': float(tenant_monthly_rent),
+            'paid_this_month': float(tenant_monthly_paid),
+            'total_balance': float(tenant_balance),
+            'shop_count': tenant_shops.count(),
+            'shops': shops_detail
+        })
+    
+    # Sort by balance (highest first)
+    tenant_breakdown.sort(key=lambda x: x['total_balance'], reverse=True)
+    
+    return Response({
+        'summary': {
+            'total_expected_monthly': float(total_expected_monthly),
+            'total_collected_this_month': float(monthly_collected),
+            'total_outstanding_balance': float(total_outstanding_balance),
+            'collection_percentage': round((monthly_collected / total_expected_monthly * 100), 2) if total_expected_monthly > 0 else 0,
+            'total_tenants': tenants.count(),
+            'total_occupied_shops': occupied_shops.count()
+        },
+        'tenant_breakdown': tenant_breakdown,
+        'month': datetime.now().strftime('%B %Y')
+    })
