@@ -15,6 +15,7 @@ class User(AbstractUser):
     phone_number = models.CharField(max_length=15, blank=True)
     user_type = models.CharField(max_length=10, choices=USER_TYPE_CHOICES, default='tenant')
     is_active = models.BooleanField(default=True)
+    has_temporary_password = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     

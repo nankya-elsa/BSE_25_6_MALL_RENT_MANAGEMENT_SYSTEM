@@ -50,6 +50,7 @@ def login(request):
     """Login user and return user data including role"""
     email = request.data.get('email', 'unknown')
     password = request.data.get('password')
+    change_password = request.data.get('change_password', False)  # NEW
     
     logger.info(f"Login attempt for email: {email}")
     
@@ -64,20 +65,22 @@ def login(request):
         }, status=status.HTTP_400_BAD_REQUEST)
     
     try:
-        # Get user by email
         user = User.objects.get(email=email)
         
-        # Check if user is active
         if not user.is_active:
             logger.warning(f"Login attempt for inactive user: {email}")
             return Response({
                 'message': 'Your account is not active. Please contact the administrator.'
             }, status=status.HTTP_403_FORBIDDEN)
         
-        # Verify password
         if user.check_password(password):
             
-            # Prepare user data with role information
+            # If user changed their password, update the flag
+            if change_password and user.has_temporary_password:
+                user.has_temporary_password = False
+                user.save()
+                logger.info(f"User {email} changed temporary password")
+            
             user_data = {
                 'id': user.id,
                 'email': user.email,
@@ -86,9 +89,9 @@ def login(request):
                 'last_name': user.last_name,
                 'full_name': user.get_full_name() if hasattr(user, 'get_full_name') else f"{user.first_name} {user.last_name}",
                 'phone_number': getattr(user, 'phone_number', ''),
-                'is_staff': user.is_staff,  # CRITICAL: This determines admin vs tenant
+                'is_staff': user.is_staff,
                 'is_active': user.is_active,
-                'user_type': 'admin' if user.is_staff else 'tenant',  # Explicit role
+                'user_type': 'admin' if user.is_staff else 'tenant',
             }
             
             logger.info(f"Successful login for user: {email} (is_staff: {user.is_staff})")
@@ -150,3 +153,39 @@ def profile(request):
         return Response({
             'message': 'Error retrieving profile'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def check_email(request):
+    """Check if email exists and return temp password if user has one"""
+    email = request.data.get('email', '')
+    
+    if not email:
+        return Response({
+            'exists': False
+        }, status=status.HTTP_200_OK)
+    
+    try:
+        user = User.objects.get(email=email)
+        
+        # Only return temp password info if:
+        # 1. User is not staff (tenant)
+        # 2. User has temporary password
+        if not user.is_staff and user.has_temporary_password:
+            return Response({
+                'exists': True,
+                'has_temp_password': True,
+                'is_staff': False
+            }, status=status.HTTP_200_OK)
+        else:
+            return Response({
+                'exists': True,
+                'has_temp_password': False,
+                'is_staff': user.is_staff
+            }, status=status.HTTP_200_OK)
+            
+    except User.DoesNotExist:
+        return Response({
+            'exists': False
+        }, status=status.HTTP_200_OK)
