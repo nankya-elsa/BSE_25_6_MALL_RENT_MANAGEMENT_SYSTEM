@@ -1,5 +1,7 @@
+// pages/DashboardPage.tsx
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import mallBackground from "../assets/images/mall.jpg";
 
 interface User {
   id: number;
@@ -21,6 +23,7 @@ const DashboardPage: React.FC = () => {
     const userData = localStorage.getItem("user");
     if (userData) {
       setUser(JSON.parse(userData));
+
       setLoading(false);
     } else {
       navigate("/login");
@@ -35,8 +38,11 @@ const DashboardPage: React.FC = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-xl">Loading...</div>
+      <div className="h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-600"></div>
+          <p className="mt-6 text-xl text-gray-600">Loading...</p>
+        </div>
       </div>
     );
   }
@@ -46,43 +52,48 @@ const DashboardPage: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Navigation */}
-      <nav className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex items-center">
-              <h1 className="text-xl font-bold text-gray-900">
-                Ham Shopping Mall
-              </h1>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-gray-600">Welcome, {user.first_name}!</span>
-              <div className="relative">
-                <button
-                  onClick={handleLogout}
-                  className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium"
-                >
-                  Logout
-                </button>
+    <>
+      <div className="min-h-screen bg-gray-50">
+        {/* Navigation */}
+        <nav className="bg-white shadow-sm">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+              <div className="flex items-center">
+                <h1 className="text-xl font-bold text-gray-900">
+                  Ham Shopping Mall
+                </h1>
+              </div>
+              <div className="flex items-center space-x-4">
+                <span className="text-gray-600">
+                  Welcome, {user.first_name}!
+                </span>
+                <div className="relative">
+                  <button
+                    onClick={handleLogout}
+                    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md text-sm font-medium"
+                  >
+                    Logout
+                  </button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
-      </nav>
+        </nav>
+        {/* HERO SECTION */}
+        <div
+          className="relative h-screen w-full bg-cover bg-center flex items-center justify-center text-center text-white px-6"
+          style={{ backgroundImage: `url(${mallBackground})` }}
+        >
+          <div className="absolute inset-0 bg-black/70"></div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Welcome Section */}
-        <div className="bg-white rounded-lg shadow-sm p-6 mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            Welcome, {user.first_name}!
-          </h2>
-          <div className="text-center py-8">
-            <h1 className="text-3xl font-bold text-blue-600 mb-2">
-              HAM SHOPPING MALL RENT MANAGEMENT SYSTEM
+          <div className="relative z-10 max-w-5xl">
+            <h1 className="text-6xl md:text-8xl font-black mb-4 drop-shadow-2xl">
+              HAM SHOPPING MALL
             </h1>
-            <p className="text-lg text-gray-600 mb-8">
+            <h2 className="text-3xl md:text-5xl font-light mb-6 tracking-wider">
+              RENT MANAGEMENT SYSTEM
+            </h2>
+            <p className="text-xl mb-16 max-w-2xl mx-auto opacity-90">
               Your one-stop solution for seamless rent management
             </p>
 
@@ -203,7 +214,7 @@ const DashboardPage: React.FC = () => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
