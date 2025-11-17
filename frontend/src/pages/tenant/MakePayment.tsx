@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Chatbot from "../../components/common/Chatbot";
 
 interface Shop {
   id: number;
@@ -522,6 +523,8 @@ const MakePayment: React.FC = () => {
           </div>
         )}
       </div>
+      {/* Add Chatbot */}
+      <Chatbot />
     </div>
   );
 };

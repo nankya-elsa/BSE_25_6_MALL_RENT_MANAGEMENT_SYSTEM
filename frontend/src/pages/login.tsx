@@ -33,15 +33,57 @@ const LoginPage: React.FC = () => {
   });
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<ApiErrors>({});
+  const [hasTempPassword, setHasTempPassword] = useState(false);
+  const [passwordEdited, setPasswordEdited] = useState(false);
+  const [checkingEmail, setCheckingEmail] = useState(false);
+
+  const handleEmailBlur = async () => {
+    const email = formData.email.trim();
+
+    if (!email || !email.includes("@")) {
+      return;
+    }
+
+    setCheckingEmail(true);
+
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/api/auth/check-email/",
+        { email }
+      );
+
+      const data = response.data;
+
+      if (data.exists && data.has_temp_password && !data.is_staff) {
+        setHasTempPassword(true);
+        setPasswordEdited(false);
+        // Don't set the password field - let them enter it
+      } else {
+        setHasTempPassword(false);
+        setPasswordEdited(false);
+      }
+    } catch (error) {
+      console.error("Error checking email:", error);
+      setHasTempPassword(false);
+    } finally {
+      setCheckingEmail(false);
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
     setFormData((prev) => ({
       ...prev,
       [name]: value,
     }));
 
-    // Clear error when user starts typing
+    // Track if password was edited
+    if (name === "password" && hasTempPassword) {
+      setPasswordEdited(value.length > 0);
+    }
+
+    // Clear errors
     if (errors[name]) {
       setErrors((prev) => {
         const newErrors = { ...prev };
@@ -50,7 +92,6 @@ const LoginPage: React.FC = () => {
       });
     }
 
-    // Clear general error too
     if (errors.general) {
       setErrors((prev) => {
         const newErrors = { ...prev };
@@ -68,7 +109,10 @@ const LoginPage: React.FC = () => {
     try {
       const response = await axios.post(
         "http://localhost:8000/api/auth/login/",
-        formData,
+        {
+          ...formData,
+          change_password: hasTempPassword && passwordEdited, // Flag if they changed temp password
+        },
         {
           headers: {
             "Content-Type": "application/json",
@@ -78,17 +122,16 @@ const LoginPage: React.FC = () => {
 
       const { user } = response.data as { user: UserData };
 
-      // Store user data in localStorage
       localStorage.setItem("user", JSON.stringify(user));
 
       console.log("Login successful:", user);
 
-      // Route based on is_staff (admin) or regular tenant
+      // Route based on is_staff
       if (user.is_staff) {
-        console.log("Redirecting to admin dashboard (is_staff: true)...");
+        console.log("Redirecting to admin dashboard...");
         navigate("/admin/dashboard");
       } else {
-        console.log("Redirecting to tenant dashboard (is_staff: false)...");
+        console.log("Redirecting to tenant dashboard...");
         navigate("/dashboard");
       }
     } catch (error: unknown) {
@@ -99,20 +142,17 @@ const LoginPage: React.FC = () => {
         const data = error.response.data;
 
         if (status === 401) {
-          // Invalid credentials
           setErrors({
             general:
               data.message || "Invalid email or password. Please try again.",
           });
         } else if (status === 403) {
-          // Account not active
           setErrors({
             general:
               data.message ||
               "Your account is not active. Please contact the administrator.",
           });
         } else if (status === 400) {
-          // Validation errors
           if (data.errors) {
             setErrors(data.errors);
           } else {
@@ -126,13 +166,11 @@ const LoginPage: React.FC = () => {
           });
         }
       } else if (axios.isAxiosError(error) && error.request) {
-        // Network error
         setErrors({
           general:
             "Cannot connect to server. Please check your internet connection.",
         });
       } else {
-        // Unknown error
         setErrors({
           general: "An unexpected error occurred. Please try again.",
         });
@@ -213,6 +251,7 @@ const LoginPage: React.FC = () => {
                 type="email"
                 autoComplete="email"
                 required
+                onBlur={handleEmailBlur}
                 className={`appearance-none block w-full px-4 py-3 border rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${
                   errors.email ? "border-red-500 bg-red-50" : "border-gray-300"
                 }`}
@@ -220,6 +259,30 @@ const LoginPage: React.FC = () => {
                 value={formData.email}
                 onChange={handleChange}
               />
+              {checkingEmail && (
+                <p className="text-xs text-gray-500 mt-1 flex items-center">
+                  <svg
+                    className="animate-spin h-3 w-3 mr-1"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                      fill="none"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
+                  </svg>
+                  Checking...
+                </p>
+              )}
               {errors.email && (
                 <p className="text-red-600 text-xs mt-2 flex items-center">
                   <svg
@@ -240,12 +303,19 @@ const LoginPage: React.FC = () => {
 
             {/* Password Field */}
             <div>
-              <label
-                htmlFor="password"
-                className="block text-sm font-semibold text-gray-700 mb-2"
-              >
-                Password
-              </label>
+              <div className="flex justify-between items-center mb-2">
+                <label
+                  htmlFor="password"
+                  className="block text-sm font-semibold text-gray-700"
+                >
+                  Password
+                </label>
+                {hasTempPassword && !passwordEdited && (
+                  <span className="text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded font-medium">
+                    Editable - Change if desired
+                  </span>
+                )}
+              </div>
               <input
                 id="password"
                 name="password"
@@ -255,12 +325,34 @@ const LoginPage: React.FC = () => {
                 className={`appearance-none block w-full px-4 py-3 border rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition ${
                   errors.password
                     ? "border-red-500 bg-red-50"
+                    : hasTempPassword && !passwordEdited
+                    ? "border-yellow-400 bg-yellow-50"
                     : "border-gray-300"
                 }`}
-                placeholder="Enter your password"
+                placeholder={
+                  hasTempPassword
+                    ? "Enter your temporary password or create new one"
+                    : "Enter your password"
+                }
                 value={formData.password}
                 onChange={handleChange}
               />
+              {hasTempPassword && !passwordEdited && (
+                <p className="text-xs text-yellow-700 mt-1 flex items-center">
+                  <svg
+                    className="w-4 h-4 mr-1"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  Enter admin-provided password or set your own
+                </p>
+              )}
               {errors.password && (
                 <p className="text-red-600 text-xs mt-2 flex items-center">
                   <svg

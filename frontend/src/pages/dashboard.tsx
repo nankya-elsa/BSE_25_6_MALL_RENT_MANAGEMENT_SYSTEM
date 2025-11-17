@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import mallBackground from "../assets/images/mall.jpg";
+import Chatbot from "../components/common/Chatbot";
 
 interface User {
   id: number;
@@ -180,6 +181,8 @@ const DashboardPage: React.FC = () => {
             </button>
           </div>
         </div>
+        {/* Add Chatbot */}
+        <Chatbot />
       </div>
     </>
   );

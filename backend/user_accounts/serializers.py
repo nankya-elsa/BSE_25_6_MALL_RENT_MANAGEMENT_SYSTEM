@@ -149,6 +149,7 @@ class AdminTenantRegistrationSerializer(serializers.Serializer):
                 )
 
             user.set_password(temp_password)
+            user.has_temporary_password = True
             user.save()
 
             # Force a refresh to ensure the user ID is available

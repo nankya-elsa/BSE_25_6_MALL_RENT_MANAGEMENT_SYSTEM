@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import Chatbot from "../../components/common/Chatbot";
 
 interface Shop {
   id: number;
@@ -189,6 +190,8 @@ const ShopDetails: React.FC = () => {
           )}
         </div>
       </section>
+      {/* Add Chatbot */}
+      <Chatbot />
     </div>
   );
 };
